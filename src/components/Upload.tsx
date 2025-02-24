@@ -2,6 +2,7 @@
 
 import Button from '@/components/Button';
 import { useState } from 'react';
+import Dropzone from './Dropzone';
 
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
@@ -27,13 +28,9 @@ export default function Upload() {
   };
 
   return (
-    <div>
-      <input
-        type="file"
-        accept=".csv"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
-      <Button variant="secondary" disabled={!file} onClick={handleUpload}>
+    <div className="flex w-full flex-col items-center justify-center gap-6">
+      <Dropzone onChange={(e) => setFile(e.target.files?.[0] || null)} />
+      <Button disabled={!file} onClick={handleUpload}>
         Upload CSV
       </Button>
     </div>
