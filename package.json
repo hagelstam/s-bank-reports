@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "clean": "rm -rf .next node_modules"
+    "clean": "rm -rf .next node_modules",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
   },
   "dependencies": {
     "next": "15.1.7",
