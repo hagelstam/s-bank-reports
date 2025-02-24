@@ -18,11 +18,14 @@ export default function Upload() {
       body: formData,
     });
 
+    const date = new Date().toLocaleDateString('fi-FI');
+    const filename = `S-Bank Report ${date}.pdf`;
+
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'report.csv';
+    a.download = filename;
     a.click();
     window.URL.revokeObjectURL(url);
   };
