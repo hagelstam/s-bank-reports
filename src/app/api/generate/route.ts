@@ -1,3 +1,19 @@
+import { parse } from 'papaparse';
+
+type TableRow = {
+  Bokningsdag?: string;
+  Betalningsdag?: string;
+  Belopp?: string;
+  Betalningstyp?: string;
+  Betalare?: string;
+  'Mottagarens namn'?: string;
+  'Mottagarens kontonummer'?: string;
+  'Mottagarens BIC-kod'?: string;
+  Referensnummer?: string;
+  Meddelande?: string;
+  Arkiveringskod?: string;
+};
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -7,20 +23,37 @@ export async function POST(req: Request) {
       return Response.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    const csvBuffer: Buffer[] = [];
-
     const buffer = Buffer.from(await file.arrayBuffer());
-    csvBuffer.push(buffer);
-    const finalCsv = Buffer.concat(csvBuffer);
+    const csvText = buffer.toString('utf-8');
+    const { data } = parse<TableRow>(csvText, { delimiter: ';', header: true });
 
-    return new Response(finalCsv, {
-      headers: {
-        'Content-Type': 'application/csv',
-        'Content-Disposition': 'attachment; filename=report.csv',
-      },
+    let totalIncome = 0;
+    let totalExpenses = 0;
+
+    data.forEach((row) => {
+      if (!row.Belopp) return;
+      const amount = parseFloat(row.Belopp.replace(',', '.'));
+      if (!isNaN(amount)) {
+        if (amount > 0) {
+          totalIncome += amount;
+        } else {
+          totalExpenses += amount;
+        }
+      }
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_err) {
+
+    return Response.json(
+      {
+        data: {
+          totalIncome: totalIncome,
+          totalExpenses: totalExpenses,
+          netIncome: totalIncome - totalExpenses,
+        },
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error(err);
     return Response.json({ error: 'Error generating report' }, { status: 500 });
   }
 }
