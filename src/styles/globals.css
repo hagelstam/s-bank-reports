@@ -9,11 +9,14 @@
   --color-background: #fff;
   --color-foreground: #f5f8f7;
 
-  --color-text: #004628;
-  --color-text-display: #00aa46;
+  --color-text-primary: #004628;
+  --color-text-accent: #00aa46;
 
-  --color-button: #91fa9b;
-  --color-button-hover: #00eb5a;
+  --color-btn-primary: #91fa9b;
+  --color-btn-primary-hover: #00eb5a;
+
+  --color-btn-secondary: var(--color-background);
+  --color-btn-secondary-hover: #eff0f1;
 
   --color-border: #c7c7c7;
 }
