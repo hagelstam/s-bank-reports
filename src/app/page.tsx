@@ -2,12 +2,12 @@ import Upload from '@/components/Upload';
 
 export default function Home() {
   return (
-    <main className="p-8">
-      <h1 className="text-text-accent font-serif text-[104px]">
+    <div className="flex flex-col items-center justify-center">
+      <h1 className="text-text-accent mb-4 font-serif text-7xl">
         S-Bank Reports
       </h1>
-      <p className="text-[27px]">Generate reports for S-Bank accounts.</p>
+      <p className="text-xl">Generate reports for S-Bank accounts.</p>
       <Upload />
-    </main>
+    </div>
   );
 }

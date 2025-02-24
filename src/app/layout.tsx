@@ -1,5 +1,7 @@
+import Navbar from '@/components/Navbar';
 import { sBonusDisplay, sBonusUX } from '@/lib/fonts';
 import '@/styles/globals.css';
+import clsx from 'clsx';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -13,11 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${sBonusUX.variable} ${sBonusDisplay.variable} antialiased`}
-    >
-      <body className="bg-background text-text-primary">{children}</body>
+    <html lang="en" className={clsx(sBonusUX.variable, sBonusDisplay.variable)}>
+      <body className="bg-background text-text-primary">
+        <Navbar />
+        <main className="min-h-screen py-32 antialiased">{children}</main>
+      </body>
     </html>
   );
 }
