@@ -48,13 +48,13 @@ export default function Upload() {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-6">
       <Dropzone onChange={(e) => setFile(e.target.files?.[0] || null)} />
-      {!isError && (
+      {isError && (
         <div className="flex flex-col gap-1 text-center text-sm text-red-700">
           <p>There was an error generating the report.</p>
           <p>Please check the format of the CSV and try again later.</p>
         </div>
       )}
-      <Button disabled={!file || isLoading} onClick={handleUpload}>
+      <Button onClick={handleUpload} loading={isLoading} disabled={!file}>
         {isLoading ? 'Generating...' : 'Generate Report'}
       </Button>
     </div>
