@@ -1,7 +1,8 @@
 import { parse } from 'papaparse';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
-interface TableRow {
+interface TableRowSV {
+  lang: 'sv';
   Bokningsdag?: string;
   Betalningsdag?: string;
   Belopp?: string;
@@ -15,6 +16,23 @@ interface TableRow {
   Arkiveringskod?: string;
 }
 
+interface TableRowFI {
+  lang: 'fi';
+  Kirjauspäivä?: string;
+  Maksupäivä?: string;
+  Summa?: string;
+  Tapahtumalaji?: string;
+  Maksaja?: string;
+  'Saajan nimi'?: string;
+  'Saajan tilinumero'?: string;
+  'Saajan BIC-tunnus'?: string;
+  Viitenumero?: string;
+  Viesti?: string;
+  Arkistointitunnus?: string;
+}
+
+type TableRow = TableRowSV | TableRowFI;
+
 interface Report {
   totalIncome: number;
   totalExpenses: number;
@@ -24,14 +42,26 @@ interface Report {
 export const parseCsv = async (file: Blob): Promise<Report> => {
   const buffer = Buffer.from(await file.arrayBuffer());
   const csvText = buffer.toString('utf-8');
-  const { data } = parse<TableRow>(csvText, { delimiter: ';', header: true });
+  const { data, meta } = parse<TableRow>(csvText, {
+    delimiter: ';',
+    header: true,
+  });
 
-  let totalIncome = 0;
-  let totalExpenses = 0;
+  const isSwedish = meta.fields?.includes('Belopp') ?? false;
 
-  data.forEach((row) => {
-    if (!row.Belopp) return;
-    const amount = parseFloat(row.Belopp.replace(',', '.'));
+  const typedData = data.map((row) => ({
+    ...row,
+    lang: isSwedish ? 'sv' : 'fi',
+  })) as TableRow[];
+
+  let totalIncome = 0,
+    totalExpenses = 0;
+
+  typedData.forEach((row) => {
+    const amountValue = row.lang === 'sv' ? row.Belopp : row.Summa;
+    if (!amountValue) return;
+
+    const amount = parseFloat(amountValue.replace(',', '.'));
     if (!isNaN(amount)) {
       if (amount > 0) {
         totalIncome += amount;
