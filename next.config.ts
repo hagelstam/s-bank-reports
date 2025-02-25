@@ -11,8 +11,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     webpackMemoryOptimizations: true,
-    serverComponentsExternalPackages: ['prom-client'],
   },
+  serverExternalPackages: ['prom-client'],
 };
 
 const withBundleAnalyzer = analyze({
