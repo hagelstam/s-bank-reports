@@ -1,22 +1,9 @@
-'use client';
-
-import { useState } from 'react';
-
 interface DropzoneProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  fileName: string;
 }
 
-export default function Dropzone({ onChange }: DropzoneProps) {
-  const [fileName, setFileName] = useState('');
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-      onChange(event);
-    }
-  };
-
+export default function Dropzone({ onChange, fileName }: DropzoneProps) {
   return (
     <div className="flex w-full max-w-xl items-center justify-center px-4">
       <label
@@ -56,7 +43,7 @@ export default function Dropzone({ onChange }: DropzoneProps) {
           accept=".csv"
           type="file"
           className="hidden"
-          onChange={handleFileChange}
+          onChange={onChange}
         />
       </label>
     </div>
