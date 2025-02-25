@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
-    logger.error('Error generating report: ', err);
+    logger.error('Error generating report:', err);
     return Response.json({ error: 'Error generating report' }, { status: 500 });
   }
 }

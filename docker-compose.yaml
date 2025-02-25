@@ -5,9 +5,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    networks:
-      - app_network
 
-networks:
-  app_network:
-    driver: bridge
+  prometheus:
+    image: prom/prometheus:v3.2.0
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - '9090:9090'

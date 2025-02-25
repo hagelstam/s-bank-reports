@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    webpackMemoryOptimizations: true,
+    serverComponentsExternalPackages: ['prom-client'],
+  },
 };
 
 const withBundleAnalyzer = analyze({
