@@ -1,6 +1,10 @@
+import { logger } from '@/lib/logger';
 import { generatePdf, parseCsv } from '@/lib/report';
 
 export async function POST(req: Request) {
+  logger.info('Generating report...');
+  const start = Date.now();
+
   try {
     const formData = await req.formData();
     const file = formData.get('file') as Blob;
@@ -12,6 +16,11 @@ export async function POST(req: Request) {
     const report = await parseCsv(file);
     const pdfBytes = await generatePdf(report);
 
+    const end = Date.now();
+    const duration = end - start;
+
+    logger.info(`Report generated in ${duration}ms`);
+
     return new Response(pdfBytes, {
       headers: {
         'Content-Type': 'application/pdf',
@@ -19,7 +28,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
-    console.error(err);
+    logger.error('Error generating report: ', err);
     return Response.json({ error: 'Error generating report' }, { status: 500 });
   }
 }
