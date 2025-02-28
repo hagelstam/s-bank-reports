@@ -13,8 +13,10 @@
     "format:write": "prettier --write .",
     "e2e": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
     "clean": "rm -rf .next node_modules",
-    "docker:up": "docker compose up -d --build",
-    "docker:down": "docker compose down"
+    "docker:prod:up": "docker compose -f compose.prod.yml up --build",
+    "docker:prod:down": "docker compose -f compose.prod.yml down",
+    "docker:dev:up": "docker compose -f compose.dev.yml up --build",
+    "docker:dev:down": "docker compose -f compose.dev.yml down"
   },
   "dependencies": {
     "@next/bundle-analyzer": "^15.1.7",
