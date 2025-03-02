@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Test
 on:
   push:
     branches:
@@ -8,9 +8,10 @@ on:
       - main
 
 jobs:
-  ci:
+  test:
     name: Build, lint and test
     runs-on: ubuntu-24.04
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,33 +21,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Cache Cypress binary
-        uses: actions/cache@v4
-        id: cypress-cache
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Static analysis
+        run: |
+          npm run lint &
+          npm run typecheck &
+          npm run format:check &
+          wait
+
       - name: Build
         run: npm run build
-
-      - name: Lint
-        run: npm run lint
 
       - name: Cypress E2E tests
         uses: cypress-io/github-action@v6
