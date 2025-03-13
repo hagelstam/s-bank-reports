@@ -10,8 +10,9 @@ export default function Home() {
   const [isError, setIsError] = useState(false);
 
   const generateReport = async () => {
-    if (!file) return;
+    if (!file || isLoading) return;
     setIsLoading(true);
+    setIsError(false);
 
     try {
       const formData = new FormData();
@@ -45,22 +46,31 @@ export default function Home() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    } else {
+      setFile(null);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <h1 className="text-text-accent font-serif text-7xl">S-Bank Reports</h1>
       <p className="mb-8 text-xl">Generate reports for S-Bank accounts.</p>
       <div className="flex w-full flex-col items-center justify-center gap-6">
-        <Dropzone
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          fileName={file?.name ?? ''}
-        />
+        <Dropzone onChange={handleFileChange} fileName={file?.name ?? ''} />
         {isError && (
           <div className="flex flex-col gap-1 text-center text-sm text-red-700">
             <p>There was an error generating the report.</p>
             <p>Please check the format of the CSV and try again later.</p>
           </div>
         )}
-        <Button onClick={generateReport} loading={isLoading} disabled={!file}>
+        <Button
+          onClick={generateReport}
+          loading={isLoading}
+          disabled={!file || isLoading}
+        >
           {isLoading ? 'Generating...' : 'Generate Report'}
         </Button>
       </div>
