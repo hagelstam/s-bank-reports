@@ -44,6 +44,7 @@ export default function Dropzone({ onChange, fileName }: DropzoneProps) {
           type="file"
           className="hidden"
           onChange={onChange}
+          multiple={false}
         />
       </label>
     </div>

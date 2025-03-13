@@ -1,9 +1,0 @@
-global:
-  scrape_interval: 30s
-
-scrape_configs:
-  - job_name: s-bank-reports
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - app:3000
