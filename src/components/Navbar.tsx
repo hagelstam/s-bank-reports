@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Navbar() {
+export const Navbar = () => {
   return (
     <nav className="bg-background fixed top-0 z-30 w-full border-b border-gray-200">
       <div className="mx-5 flex h-20 max-w-screen-xl items-center justify-between xl:mx-auto">
@@ -30,4 +30,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-}
+};

@@ -3,7 +3,7 @@ interface DropzoneProps {
   fileName: string;
 }
 
-export default function Dropzone({ onChange, fileName }: DropzoneProps) {
+export const Dropzone = ({ onChange, fileName }: DropzoneProps) => {
   return (
     <div className="flex w-full max-w-xl items-center justify-center px-4">
       <label
@@ -49,4 +49,4 @@ export default function Dropzone({ onChange, fileName }: DropzoneProps) {
       </label>
     </div>
   );
-}
+};

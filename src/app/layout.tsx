@@ -1,4 +1,4 @@
-import Navbar from '@/components/Navbar';
+import { Navbar } from '@/components';
 import { sBonusDisplay, sBonusUX } from '@/lib/fonts';
 import '@/styles/globals.css';
 import clsx from 'clsx';
