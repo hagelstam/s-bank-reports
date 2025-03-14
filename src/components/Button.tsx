@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { ButtonHTMLAttributes } from 'react';
 
-function Spinner() {
+const Spinner = () => {
   return (
     <svg
       className="text-text-primary mr-3 -ml-1 size-5 animate-spin"
@@ -24,7 +24,7 @@ function Spinner() {
       ></path>
     </svg>
   );
-}
+};
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary';
@@ -32,13 +32,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-export default function Button({
+export const Button = ({
   children,
   variant = 'primary',
   loading = false,
   disabled,
   ...props
-}: ButtonProps) {
+}: ButtonProps) => {
   return (
     <button
       className={clsx(
@@ -57,4 +57,4 @@ export default function Button({
       {children}
     </button>
   );
-}
+};

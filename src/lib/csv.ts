@@ -1,5 +1,5 @@
+import { Report, Transaction } from '@/types';
 import { parse } from 'papaparse';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 interface TableRowSV {
   lang: 'sv';
@@ -33,12 +33,6 @@ interface TableRowFI {
 
 type TableRow = TableRowSV | TableRowFI;
 
-interface Report {
-  totalIncome: number;
-  totalExpenses: number;
-  netIncome: number;
-}
-
 export const parseCsv = async (file: Blob): Promise<Report> => {
   const buffer = Buffer.from(await file.arrayBuffer());
   const csvText = buffer.toString('utf-8');
@@ -56,10 +50,15 @@ export const parseCsv = async (file: Blob): Promise<Report> => {
 
   let totalIncome = 0,
     totalExpenses = 0;
+  const transactions: Transaction[] = [];
 
   typedData.forEach((row) => {
     const amountValue = row.lang === 'sv' ? row.Belopp : row.Summa;
-    if (!amountValue) return;
+    const dateValue = row.lang === 'sv' ? row.Bokningsdag : row.Kirjauspäivä;
+    const recipientValue =
+      row.lang === 'sv' ? row['Mottagarens namn'] : row['Saajan nimi'];
+
+    if (!amountValue || !dateValue || !recipientValue) return;
 
     const amount = parseFloat(amountValue.replace(',', '.'));
     if (!isNaN(amount)) {
@@ -69,50 +68,20 @@ export const parseCsv = async (file: Blob): Promise<Report> => {
         totalExpenses += amount;
       }
     }
+
+    transactions.push({
+      date: new Date(dateValue),
+      amount,
+      recipient: recipientValue || '',
+    });
   });
+
+  transactions.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return {
     totalIncome,
     totalExpenses,
     netIncome: totalIncome + totalExpenses,
+    transactions,
   };
-};
-
-export const generatePdf = async ({
-  totalIncome,
-  totalExpenses,
-  netIncome,
-}: Report) => {
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const page = pdfDoc.addPage();
-  const { height } = page.getSize();
-
-  const fontSize = 24;
-
-  page.drawText(`Total Income: €${totalIncome.toFixed(2)}`, {
-    x: 50,
-    y: height - 100,
-    size: fontSize,
-    font,
-    color: rgb(0, 0, 0),
-  });
-
-  page.drawText(`Total Expenses: €${Math.abs(totalExpenses).toFixed(2)}`, {
-    x: 50,
-    y: height - 130,
-    size: fontSize,
-    font,
-    color: rgb(0, 0, 0),
-  });
-
-  page.drawText(`Net Income: €${netIncome.toFixed(2)}`, {
-    x: 50,
-    y: height - 160,
-    size: fontSize,
-    font,
-    color: rgb(0, 0, 0),
-  });
-
-  return pdfDoc.save();
 };

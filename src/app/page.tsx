@@ -1,10 +1,9 @@
 'use client';
 
-import Button from '@/components/Button';
-import Dropzone from '@/components/Dropzone';
+import { Button, Dropzone } from '@/components';
 import { useState } from 'react';
 
-export default function Home() {
+const Home = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -76,4 +75,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Home;
