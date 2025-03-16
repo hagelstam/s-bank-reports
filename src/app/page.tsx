@@ -3,7 +3,7 @@
 import { Button, Dropzone } from '@/components';
 import { useState } from 'react';
 
-const Home = () => {
+export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -75,6 +75,4 @@ const Home = () => {
       </div>
     </div>
   );
-};
-
-export default Home;
+}

@@ -49,8 +49,8 @@ export const parseCsv = async (file: Blob): Promise<Report> => {
     lang: isSwedish ? 'sv' : 'fi',
   })) as TableRow[];
 
-  let totalIncome = 0,
-    totalExpenses = 0;
+  let totalIncome = 0;
+  let totalExpenses = 0;
   const transactions: Transaction[] = [];
 
   typedData.forEach((row) => {
