@@ -1,4 +1,4 @@
-import { formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, truncateString } from '@/lib/utils';
 import { Report } from '@/types';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
@@ -32,20 +32,20 @@ export const generatePdf = async ({
   page.drawRectangle({
     x: 0,
     y: height - headerHeight,
-    width: width,
+    width,
     height: headerHeight,
     color: colors.darkGreen,
   });
   page.drawText('S-Bank Reports', {
     x: 80,
-    y: height - 35,
+    y: height - 50,
     size: 22,
     font: helveticaBold,
     color: colors.white,
   });
   page.drawText(`${startDate} - ${endDate}`, {
     x: width - 200,
-    y: height - 45,
+    y: height - 50,
     size: 12,
     font: helvetica,
     color: colors.white,
@@ -70,14 +70,14 @@ export const generatePdf = async ({
     y: summaryY - 20,
     size: 10,
     font: helvetica,
-    color: colors.brightGreen,
+    color: colors.darkGreen,
   });
-  page.drawText(`€${totalIncome.toFixed(2)}`, {
+  page.drawText(formatCurrency(totalIncome), {
     x: 50,
     y: summaryY - 45,
     size: 16,
     font: helveticaBold,
-    color: colors.brightGreen,
+    color: colors.darkGreen,
   });
 
   page.drawRectangle({
@@ -96,7 +96,7 @@ export const generatePdf = async ({
     font: helvetica,
     color: colors.darkGreen,
   });
-  page.drawText(`€${Math.abs(totalExpenses).toFixed(2)}`, {
+  page.drawText(formatCurrency(totalExpenses), {
     x: 60 + boxWidth,
     y: summaryY - 45,
     size: 16,
@@ -104,7 +104,6 @@ export const generatePdf = async ({
     color: colors.darkGreen,
   });
 
-  const netColor = netIncome >= 0 ? colors.brightGreen : colors.red;
   page.drawRectangle({
     x: 60 + boxWidth * 2,
     y: summaryY - boxHeight,
@@ -119,14 +118,14 @@ export const generatePdf = async ({
     y: summaryY - 20,
     size: 10,
     font: helvetica,
-    color: netColor,
+    color: colors.darkGreen,
   });
-  page.drawText(`€${netIncome.toFixed(2)}`, {
+  page.drawText(formatCurrency(netIncome), {
     x: 70 + boxWidth * 2,
     y: summaryY - 45,
     size: 16,
     font: helveticaBold,
-    color: netColor,
+    color: netIncome >= 0 ? colors.brightGreen : colors.red,
   });
 
   // Transactions table
@@ -195,9 +194,6 @@ export const generatePdf = async ({
       borderWidth: 0.5,
     });
 
-    const amountColor = amount >= 0 ? colors.brightGreen : colors.red;
-    const formattedAmount = `${amount >= 0 ? '+' : '-'} €${Math.abs(amount).toFixed(2)}`;
-
     page.drawText(formatDate(date), {
       x: 55,
       y: currentY - rowHeight / 2 - 5,
@@ -206,12 +202,7 @@ export const generatePdf = async ({
       color: colors.darkGreen,
     });
 
-    const recipientText = recipient || '';
-    const truncatedRecipient =
-      recipientText.length > 35
-        ? recipientText.substring(0, 35) + '...'
-        : recipientText;
-    page.drawText(truncatedRecipient, {
+    page.drawText(truncateString(recipient, 35), {
       x: 55 + colWidths[0],
       y: currentY - rowHeight / 2 - 5,
       size: 10,
@@ -219,12 +210,12 @@ export const generatePdf = async ({
       color: colors.darkGreen,
     });
 
-    page.drawText(formattedAmount, {
+    page.drawText(formatCurrency(amount), {
       x: 55 + colWidths[0] + colWidths[1],
       y: currentY - rowHeight / 2 - 5,
       size: 10,
       font: helveticaBold,
-      color: amountColor,
+      color: amount >= 0 ? colors.brightGreen : colors.red,
     });
   }
 
@@ -242,9 +233,9 @@ export const generatePdf = async ({
     });
 
     page.drawText(
-      `${remainingCount} more transaction${remainingCount !== 1 ? 's' : ''} not shown`,
+      `${remainingCount} more transaction${remainingCount !== 1 ? 's' : ''}...`,
       {
-        x: width / 2 - 80,
+        x: width / 2 - 60,
         y: currentY - rowHeight / 2 - 5,
         size: 10,
         font: helveticaBold,
@@ -256,7 +247,7 @@ export const generatePdf = async ({
   page.drawRectangle({
     x: 0,
     y: 0,
-    width: width,
+    width,
     height: footerHeight,
     color: colors.offWhite,
   });
@@ -269,8 +260,8 @@ export const generatePdf = async ({
     color: colors.darkGreen,
   });
 
-  page.drawText('© S Bank Reports', {
-    x: width - 80,
+  page.drawText('© S-Bank Reports', {
+    x: width - 120,
     y: 20,
     size: 10,
     font: helvetica,

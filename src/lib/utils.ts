@@ -12,7 +12,7 @@ export const truncateString = (str: string, maxLength: number): string => {
 };
 
 export const formatCurrency = (amount: number): string => {
-  return amount.toLocaleString('fi-FI');
+  return amount.toFixed(2).replace('.', ',') + ' €';
 };
 
 type Success<T> = {
