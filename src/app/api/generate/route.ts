@@ -1,35 +1,42 @@
 import { parseCsv } from '@/lib/csv';
 import { logger } from '@/lib/logger';
 import { generatePdf } from '@/lib/pdf';
+import { tryCatch } from '@/lib/utils';
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   logger.info('Generating report...');
   const start = Date.now();
 
-  try {
-    const formData = await req.formData();
-    const file = formData.get('file') as Blob;
-
-    if (!file) {
-      return Response.json({ error: 'No file uploaded' }, { status: 400 });
-    }
-
-    const report = await parseCsv(file);
-    const pdfBytes = await generatePdf(report);
-
-    const end = Date.now();
-    const duration = end - start;
-
-    logger.info(`Report generated in ${duration}ms`);
-
-    return new Response(pdfBytes, {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment;`,
-      },
-    });
-  } catch (err) {
-    logger.error('Error generating report:', err);
-    return Response.json({ error: 'Error generating report' }, { status: 500 });
+  const formData = await req.formData();
+  const file = formData.get('file') as Blob;
+  if (!file) {
+    return Response.json({ error: 'No file uploaded' }, { status: 400 });
   }
-}
+
+  const { data: report, error: csvErr } = await tryCatch(parseCsv(file));
+  if (csvErr) {
+    logger.error('Error parsing CSV:', csvErr);
+    return Response.json({ error: 'Error parsing CSV file' }, { status: 500 });
+  }
+
+  const { data: pdf, error: pdfErr } = await tryCatch(generatePdf(report));
+  if (pdfErr) {
+    logger.error('Error generating PDF:', pdfErr);
+    return Response.json(
+      { error: 'Error generating PDF report' },
+      { status: 500 }
+    );
+  }
+
+  const end = Date.now();
+  const duration = end - start;
+
+  logger.info(`Report generated in ${duration}ms`);
+
+  return new Response(pdf, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment;`,
+    },
+  });
+};

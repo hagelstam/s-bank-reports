@@ -18,7 +18,7 @@ export const generatePdf = async ({
   transactions,
 }: Report) => {
   const startDate = formatDate(transactions[0].date);
-  const endDate = formatDate(transactions[transactions.length].date);
+  const endDate = formatDate(transactions[transactions.length - 1].date);
 
   const pdfDoc = await PDFDocument.create();
   const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -36,18 +36,11 @@ export const generatePdf = async ({
     height: headerHeight,
     color: colors.darkGreen,
   });
-  page.drawText('S Bank Reports', {
+  page.drawText('S-Bank Reports', {
     x: 80,
     y: height - 35,
     size: 22,
     font: helveticaBold,
-    color: colors.white,
-  });
-  page.drawText('Report period', {
-    x: 80,
-    y: height - 60,
-    size: 14,
-    font: helvetica,
     color: colors.white,
   });
   page.drawText(`${startDate} - ${endDate}`, {
