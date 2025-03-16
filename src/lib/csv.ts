@@ -1,3 +1,4 @@
+import { parseDate } from '@/lib/utils';
 import { Report, Transaction } from '@/types';
 import { parse } from 'papaparse';
 
@@ -53,12 +54,16 @@ export const parseCsv = async (file: Blob): Promise<Report> => {
   const transactions: Transaction[] = [];
 
   typedData.forEach((row) => {
-    const amountValue = row.lang === 'sv' ? row.Belopp : row.Summa;
-    const dateValue = row.lang === 'sv' ? row.Bokningsdag : row.Kirjauspäivä;
-    const recipientValue =
-      row.lang === 'sv' ? row['Mottagarens namn'] : row['Saajan nimi'];
+    const isSv = row.lang === 'sv';
 
-    if (!amountValue || !dateValue || !recipientValue) return;
+    const amountValue = (isSv ? row.Belopp : row.Summa) ?? '';
+    const dateValue = (isSv ? row.Bokningsdag : row.Kirjauspäivä) ?? '';
+    const recipient =
+      (isSv ? row['Mottagarens namn'] : row['Saajan nimi']) ?? '';
+
+    if (amountValue === '' || dateValue === '') {
+      return;
+    }
 
     const amount = parseFloat(amountValue.replace(',', '.'));
     if (!isNaN(amount)) {
@@ -70,13 +75,13 @@ export const parseCsv = async (file: Blob): Promise<Report> => {
     }
 
     transactions.push({
-      date: new Date(dateValue),
+      date: parseDate(dateValue),
       amount,
-      recipient: recipientValue || '',
+      recipient,
     });
   });
 
-  transactions.sort((a, b) => a.date.getTime() - b.date.getTime());
+  transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return {
     totalIncome,
