@@ -16,9 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={clsx(sBonusUX.variable, sBonusDisplay.variable)}>
-      <body className="bg-background text-text-primary">
+      <body className="bg-background text-text-primary antialiased">
         <Navbar />
-        <main className="min-h-screen py-32 antialiased">{children}</main>
+        <main className="mt-32">{children}</main>
       </body>
     </html>
   );
