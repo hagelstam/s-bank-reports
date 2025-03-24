@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "e2e": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
+    "e2e": "start-server-and-test 'pnpm dev' http://localhost:3000 'cypress run --e2e'",
     "clean": "rm -rf .next node_modules"
   },
   "dependencies": {

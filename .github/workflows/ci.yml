@@ -43,7 +43,7 @@ jobs:
         id: cypress-cache
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: ${{ runner.os }}-cypress-
 
       - name: Install dependencies
@@ -62,8 +62,8 @@ jobs:
       - name: Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
+          install: false
           browser: chrome
-          start: npm start
+          start: pnpm dev
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
-          install: false
