@@ -1,3 +1,4 @@
+import GitHub from '@/assets/github.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -15,10 +16,12 @@ export function Footer() {
           aria-label="GitHub repository"
         >
           <Image
-            src="/github.png"
+            src={GitHub}
             alt="GitHub Logo"
+            priority={false}
             width="191"
             height="191"
+            loading="lazy"
             className="size-[32px] hover:opacity-75"
           />
         </Link>
