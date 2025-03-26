@@ -51,9 +51,12 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex flex-col items-center justify-center gap-6">
       <h1 className="text-text-accent font-serif text-7xl">S-Bank Reports</h1>
-      <p className="mb-8 text-xl">Generate reports for S-Bank accounts.</p>
+      <p className="mb-10 max-w-2xl text-center text-xl">
+        Upload your S-Bank transactions CSV, and let us turn it into a simple
+        financial report for you.
+      </p>
       <div className="flex w-full flex-col items-center justify-center gap-6">
         <Dropzone onChange={handleFileChange} fileName={file?.name ?? ''} />
         {isError && (
