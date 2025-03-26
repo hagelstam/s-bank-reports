@@ -49,7 +49,6 @@ jobs:
       - name: Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: false
           build: pnpm build
           start: pnpm start
           wait-on: 'http://localhost:3000'
