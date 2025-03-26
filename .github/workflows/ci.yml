@@ -5,44 +5,35 @@ on:
     branches:
       - main
 
-env:
-  NODE_VERSION: 22.14.0
-  PNPM_VERSION: 10.6.2
-
 jobs:
   build:
-    name: Lint and test
+    name: Lint, build and test
     runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
+          node-version: 22.14.0
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Lint
         run: |
-          pnpm lint &
-          pnpm typecheck &
-          pnpm format:check
+          npm run lint &
+          npm run typecheck &
+          npm run format:check
           wait
 
       - name: Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          build: pnpm build
-          start: pnpm start
+          build: npm run build
+          start: npm start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
