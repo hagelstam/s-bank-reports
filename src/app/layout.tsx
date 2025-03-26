@@ -1,4 +1,4 @@
-import { Navbar } from '@/components';
+import { Footer, Navbar } from '@/components';
 import { sBonusDisplay, sBonusUX } from '@/lib/fonts';
 import '@/styles/globals.css';
 import clsx from 'clsx';
@@ -16,9 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={clsx(sBonusUX.variable, sBonusDisplay.variable)}>
-      <body className="bg-background text-text-primary antialiased">
+      <body className="bg-background text-text-primary flex min-h-screen flex-col antialiased">
         <Navbar />
-        <main className="mt-32">{children}</main>
+        <main className="container mx-auto mt-32 mb-16 flex-grow px-4">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
