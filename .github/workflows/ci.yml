@@ -11,7 +11,7 @@ env:
 
 jobs:
   ci:
-    name: Build, lint and test
+    name: Lint and test
     runs-on: ubuntu-24.04
 
     steps:
@@ -58,44 +58,11 @@ jobs:
           pnpm format:check
           wait
 
-      - name: Build
-        run: pnpm build
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: .next
-          retention-days: 1
-
-  e2e:
-    runs-on: ubuntu-24.04
-    needs: ci
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-
       - name: Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           install: false
+          build: pnpm build
           start: pnpm start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
