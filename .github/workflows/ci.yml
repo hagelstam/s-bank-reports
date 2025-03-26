@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  NODE_VERSION: 22.14.0
+  PNPM_VERSION: 10.6.2
+
 jobs:
   ci:
     name: Build, lint and test
@@ -12,19 +16,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.6.2
+          version: ${{ env.PNPM_VERSION }}
           run_install: false
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: Get pnpm store directory
@@ -59,11 +61,41 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: .next
+          retention-days: 1
+
+  e2e:
+    runs-on: ubuntu-24.04
+    needs: ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+
       - name: Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           install: false
-          browser: chrome
-          start: pnpm dev
+          start: pnpm start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
