@@ -4,7 +4,6 @@ import { generatePdf } from '@/lib/pdf';
 import { tryCatch } from '@/lib/utils';
 
 export const POST = async (req: Request) => {
-  logger.info('Generating report...');
   const start = Date.now();
 
   const formData = await req.formData();

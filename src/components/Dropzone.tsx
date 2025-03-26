@@ -1,15 +1,43 @@
+'use client';
+
+import { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 interface DropzoneProps {
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (file: File | null) => void;
   fileName: string;
 }
 
 export const Dropzone = ({ onChange, fileName }: DropzoneProps) => {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0] || null;
+      onChange(file);
+    },
+    [onChange]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'text/csv': ['.csv'] },
+    multiple: false,
+    maxFiles: 1,
+    maxSize: MAX_FILE_SIZE,
+  });
+
   return (
     <div className="flex w-full max-w-xl items-center justify-center px-4">
-      <label
-        htmlFor="dropzone-file"
-        className="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
+      <div
+        {...getRootProps()}
+        className={`flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed ${
+          isDragActive
+            ? 'border-green-500 bg-green-50'
+            : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+        }`}
       >
+        <input {...getInputProps()} />
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
           <svg
             className="mb-4 h-8 w-8 text-gray-500"
@@ -31,22 +59,20 @@ export const Dropzone = ({ onChange, fileName }: DropzoneProps) => {
           ) : (
             <>
               <p className="mb-2 text-sm text-gray-500">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
+                {isDragActive ? (
+                  'Drop the CSV file here'
+                ) : (
+                  <>
+                    <span className="font-semibold">Click to upload</span> or
+                    drag and drop
+                  </>
+                )}
               </p>
               <p className="text-xs text-gray-500">CSV (MAX 5MB)</p>
             </>
           )}
         </div>
-        <input
-          id="dropzone-file"
-          accept=".csv"
-          type="file"
-          className="hidden"
-          onChange={onChange}
-          multiple={false}
-        />
-      </label>
+      </div>
     </div>
   );
 };
