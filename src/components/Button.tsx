@@ -45,6 +45,7 @@ export const Button = ({
         'text-text-primary inline-flex items-center rounded-full px-6 py-3 text-base leading-6 font-medium',
         'enabled:transition enabled:duration-150 enabled:ease-in-out',
         'disabled:cursor-not-allowed disabled:opacity-50',
+        'enabled:hover:cursor-pointer disabled:hover:cursor-not-allowed',
         variant === 'primary' &&
           'bg-btn-primary enabled:hover:bg-btn-primary-hover',
         variant === 'secondary' &&
