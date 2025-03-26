@@ -1,3 +1,4 @@
+import Logo from '@/assets/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -7,7 +8,7 @@ export const Navbar = () => {
       <div className="mx-6 flex h-20 max-w-[1024px] items-center justify-between lg:mx-auto">
         <Link href="/" className="flex items-center">
           <Image
-            src="/logo.png"
+            src={Logo}
             alt="Logo"
             height="143"
             width="320"
