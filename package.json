@@ -21,6 +21,7 @@
     "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8",
     "winston": "^3.17.0"
   },
   "devDependencies": {
