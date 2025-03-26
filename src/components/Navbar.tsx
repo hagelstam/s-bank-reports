@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 export const Navbar = () => {
   return (
-    <nav className="bg-background fixed top-0 z-30 w-full border-b border-gray-200">
-      <div className="mx-5 flex h-20 max-w-screen-xl items-center justify-between xl:mx-auto">
+    <nav className="bg-background top-0 w-full border-b border-gray-200">
+      <div className="mx-6 flex h-20 max-w-[1024px] items-center justify-between lg:mx-auto">
         <Link href="/" className="flex items-center">
           <Image
             src="/logo.png"
@@ -12,19 +12,6 @@ export const Navbar = () => {
             height="143"
             width="320"
             className="h-[48px] w-auto"
-          />
-        </Link>
-        <Link
-          href="https://github.com/hagelstam/s-bank-reports"
-          className="flex items-center"
-          target="_blank"
-        >
-          <Image
-            src="/github.png"
-            alt="GitHub"
-            width="191"
-            height="191"
-            className="size-[32px]"
           />
         </Link>
       </div>
