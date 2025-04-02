@@ -81,8 +81,6 @@ export const parseCsv = async (file: Blob): Promise<Report> => {
     });
   });
 
-  transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
-
   return {
     totalIncome,
     totalExpenses,

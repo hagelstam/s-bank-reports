@@ -9,7 +9,22 @@ const colors = {
   offWhite: rgb(245 / 255, 248 / 255, 247 / 255),
   grey: rgb(199 / 255, 199 / 255, 199 / 255),
   red: rgb(220 / 255, 53 / 255, 69 / 255),
+  lightGrey: rgb(240 / 255, 240 / 255, 240 / 255),
+  darkGrey: rgb(100 / 255, 100 / 255, 100 / 255),
 };
+
+const MARGIN = 40;
+const PAGE_WIDTH = 595;
+const PAGE_HEIGHT = 842;
+const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
+
+const HEADER_HEIGHT = 80;
+const FOOTER_HEIGHT = 40;
+
+const SUMMARY_BOX_HEIGHT = 80;
+const SUMMARY_BOX_WIDTH = (CONTENT_WIDTH - 40) / 3;
+
+const TABLE_ROW_HEIGHT = 35;
 
 export const generatePdf = async ({
   totalIncome,
@@ -17,217 +32,211 @@ export const generatePdf = async ({
   netIncome,
   transactions,
 }: Report) => {
-  const startDate = formatDate(transactions[0].date);
-  const endDate = formatDate(transactions[transactions.length - 1].date);
+  transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const startDate = formatDate(transactions[transactions.length - 1].date);
+  const endDate = formatDate(transactions[0].date);
 
   const pdfDoc = await PDFDocument.create();
   const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const page = pdfDoc.addPage([595, 842]);
-  const { width, height } = page.getSize();
+  const page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
 
-  const headerHeight = 80;
-
-  // Header
+  /**
+   * HEADER
+   */
   page.drawRectangle({
     x: 0,
-    y: height - headerHeight,
-    width,
-    height: headerHeight,
+    y: PAGE_HEIGHT - HEADER_HEIGHT,
+    width: PAGE_WIDTH,
+    height: HEADER_HEIGHT,
     color: colors.darkGreen,
   });
   page.drawText('S-Bank Reports', {
-    x: 80,
-    y: height - 50,
-    size: 22,
+    x: MARGIN,
+    y: PAGE_HEIGHT - 50,
+    size: 24,
     font: helveticaBold,
     color: colors.white,
   });
   page.drawText(`${startDate} - ${endDate}`, {
-    x: width - 200,
-    y: height - 50,
+    x: PAGE_WIDTH - MARGIN - 150,
+    y: PAGE_HEIGHT - 50,
     size: 12,
     font: helvetica,
     color: colors.white,
   });
 
-  const summaryY = height - headerHeight - 40;
-  const boxWidth = (width - 120) / 3;
-  const boxHeight = 70;
+  /**
+   * SUMMARY
+   */
+  const summaryY = PAGE_HEIGHT - HEADER_HEIGHT - 30;
 
-  // Summary
+  // Income box
   page.drawRectangle({
-    x: 40,
-    y: summaryY - boxHeight,
-    width: boxWidth,
-    height: boxHeight,
+    x: MARGIN,
+    y: summaryY - SUMMARY_BOX_HEIGHT,
+    width: SUMMARY_BOX_WIDTH,
+    height: SUMMARY_BOX_HEIGHT,
     color: colors.white,
     borderColor: colors.grey,
     borderWidth: 0.5,
   });
-  page.drawText('Income', {
-    x: 50,
-    y: summaryY - 20,
-    size: 10,
+  page.drawText('Total Income', {
+    x: MARGIN + 20,
+    y: summaryY - 25,
+    size: 12,
     font: helvetica,
     color: colors.darkGreen,
   });
   page.drawText(formatCurrency(totalIncome), {
-    x: 50,
-    y: summaryY - 45,
-    size: 16,
+    x: MARGIN + 20,
+    y: summaryY - 55,
+    size: 20,
     font: helveticaBold,
-    color: colors.darkGreen,
+    color: colors.brightGreen,
   });
 
+  // Expenses box
   page.drawRectangle({
-    x: 50 + boxWidth,
-    y: summaryY - boxHeight,
-    width: boxWidth,
-    height: boxHeight,
+    x: MARGIN + SUMMARY_BOX_WIDTH + 20,
+    y: summaryY - SUMMARY_BOX_HEIGHT,
+    width: SUMMARY_BOX_WIDTH,
+    height: SUMMARY_BOX_HEIGHT,
     color: colors.white,
     borderColor: colors.grey,
     borderWidth: 0.5,
   });
-  page.drawText('Expenses', {
-    x: 60 + boxWidth,
-    y: summaryY - 20,
-    size: 10,
+  page.drawText('Total Expenses', {
+    x: MARGIN + SUMMARY_BOX_WIDTH + 40,
+    y: summaryY - 25,
+    size: 12,
     font: helvetica,
     color: colors.darkGreen,
   });
   page.drawText(formatCurrency(totalExpenses), {
-    x: 60 + boxWidth,
-    y: summaryY - 45,
-    size: 16,
+    x: MARGIN + SUMMARY_BOX_WIDTH + 40,
+    y: summaryY - 55,
+    size: 20,
     font: helveticaBold,
-    color: colors.darkGreen,
+    color: colors.red,
   });
 
+  // Net income box
   page.drawRectangle({
-    x: 60 + boxWidth * 2,
-    y: summaryY - boxHeight,
-    width: boxWidth,
-    height: boxHeight,
+    x: MARGIN + (SUMMARY_BOX_WIDTH + 20) * 2,
+    y: summaryY - SUMMARY_BOX_HEIGHT,
+    width: SUMMARY_BOX_WIDTH,
+    height: SUMMARY_BOX_HEIGHT,
     color: colors.white,
     borderColor: colors.grey,
     borderWidth: 0.5,
   });
-  page.drawText('Net income', {
-    x: 70 + boxWidth * 2,
-    y: summaryY - 20,
-    size: 10,
+  page.drawText('Net Income', {
+    x: MARGIN + (SUMMARY_BOX_WIDTH + 20) * 2 + 20,
+    y: summaryY - 25,
+    size: 12,
     font: helvetica,
     color: colors.darkGreen,
   });
   page.drawText(formatCurrency(netIncome), {
-    x: 70 + boxWidth * 2,
-    y: summaryY - 45,
-    size: 16,
+    x: MARGIN + (SUMMARY_BOX_WIDTH + 20) * 2 + 20,
+    y: summaryY - 55,
+    size: 20,
     font: helveticaBold,
     color: netIncome >= 0 ? colors.brightGreen : colors.red,
   });
 
-  // Transactions table
-  const tableY = summaryY - boxHeight - 40;
-  const tableWidth = width - 80;
+  /**
+   * TRANSACTIONS TABLE
+   */
+  const tableY = summaryY - SUMMARY_BOX_HEIGHT - 30;
+  const colWidths = [100, 250, 120];
 
-  page.drawText('Transactions', {
-    x: 40,
-    y: tableY + 15,
-    size: 14,
-    font: helveticaBold,
-    color: colors.darkGreen,
-  });
-
-  const rowHeight = 30;
-  const colWidths = [120, 220, 120];
-
+  // Table header
   page.drawRectangle({
-    x: 40,
-    y: tableY - rowHeight,
-    width: tableWidth,
-    height: rowHeight,
+    x: MARGIN,
+    y: tableY - TABLE_ROW_HEIGHT,
+    width: CONTENT_WIDTH,
+    height: TABLE_ROW_HEIGHT,
     color: colors.darkGreen,
   });
-  page.drawText('Date', {
-    x: 55,
-    y: tableY - rowHeight / 2 - 5,
-    size: 10,
-    font: helveticaBold,
-    color: colors.white,
-  });
-  page.drawText('Recipient', {
-    x: 55 + colWidths[0],
-    y: tableY - rowHeight / 2 - 5,
-    size: 10,
-    font: helveticaBold,
-    color: colors.white,
-  });
-  page.drawText('Amount', {
-    x: 55 + colWidths[0] + colWidths[1],
-    y: tableY - rowHeight / 2 - 5,
-    size: 10,
-    font: helveticaBold,
-    color: colors.white,
+
+  const headerTexts = ['Date', 'Recipient', 'Amount'];
+  headerTexts.forEach((text, i) => {
+    page.drawText(text, {
+      x:
+        MARGIN +
+        (i === 0
+          ? 20
+          : i === 1
+            ? colWidths[0] + 20
+            : colWidths[0] + colWidths[1] + 20),
+      y: tableY - TABLE_ROW_HEIGHT / 2 - 5,
+      size: 11,
+      font: helveticaBold,
+      color: colors.white,
+    });
   });
 
-  const footerHeight = 50;
-  const availableSpace = tableY - rowHeight - footerHeight;
-  const maxRows = Math.floor(availableSpace / rowHeight);
+  // Table rows
+  const availableSpace = tableY - TABLE_ROW_HEIGHT - FOOTER_HEIGHT;
+  const maxRows = Math.floor(availableSpace / TABLE_ROW_HEIGHT);
   const displayCount = Math.min(transactions.length, maxRows);
 
   let currentY = tableY;
 
   for (let i = 0; i < displayCount; i++) {
-    currentY -= rowHeight;
+    currentY -= TABLE_ROW_HEIGHT;
     const { amount, date, recipient } = transactions[i];
 
-    const bgColor = i % 2 === 0 ? colors.white : colors.offWhite;
     page.drawRectangle({
-      x: 40,
-      y: currentY - rowHeight,
-      width: tableWidth,
-      height: rowHeight,
-      color: bgColor,
+      x: MARGIN,
+      y: currentY - TABLE_ROW_HEIGHT,
+      width: CONTENT_WIDTH,
+      height: TABLE_ROW_HEIGHT,
+      color: i % 2 === 0 ? colors.white : colors.offWhite,
       borderColor: colors.grey,
       borderWidth: 0.5,
     });
 
+    // Date
     page.drawText(formatDate(date), {
-      x: 55,
-      y: currentY - rowHeight / 2 - 5,
+      x: MARGIN + 20,
+      y: currentY - TABLE_ROW_HEIGHT / 2 - 5,
       size: 10,
       font: helvetica,
-      color: colors.darkGreen,
+      color: colors.darkGrey,
     });
 
-    page.drawText(truncateString(recipient, 35), {
-      x: 55 + colWidths[0],
-      y: currentY - rowHeight / 2 - 5,
+    // Recipient
+    page.drawText(truncateString(recipient, 40), {
+      x: MARGIN + colWidths[0] + 20,
+      y: currentY - TABLE_ROW_HEIGHT / 2 - 5,
       size: 10,
       font: helvetica,
-      color: colors.darkGreen,
+      color: colors.darkGrey,
     });
 
+    // Amount
     page.drawText(formatCurrency(amount), {
-      x: 55 + colWidths[0] + colWidths[1],
-      y: currentY - rowHeight / 2 - 5,
+      x: MARGIN + colWidths[0] + colWidths[1] + 20,
+      y: currentY - TABLE_ROW_HEIGHT / 2 - 5,
       size: 10,
       font: helveticaBold,
       color: amount >= 0 ? colors.brightGreen : colors.red,
     });
   }
 
+  // More transactions indicator
   if (transactions.length > displayCount) {
     const remainingCount = transactions.length - displayCount;
-
     page.drawRectangle({
-      x: 40,
-      y: currentY - rowHeight,
-      width: tableWidth,
-      height: rowHeight,
-      color: colors.offWhite,
+      x: MARGIN,
+      y: currentY - TABLE_ROW_HEIGHT,
+      width: CONTENT_WIDTH,
+      height: TABLE_ROW_HEIGHT,
+      color: colors.lightGrey,
       borderColor: colors.grey,
       borderWidth: 0.5,
     });
@@ -235,34 +244,32 @@ export const generatePdf = async ({
     page.drawText(
       `${remainingCount} more transaction${remainingCount !== 1 ? 's' : ''}...`,
       {
-        x: width / 2 - 60,
-        y: currentY - rowHeight / 2 - 5,
+        x: PAGE_WIDTH / 2 - 70,
+        y: currentY - TABLE_ROW_HEIGHT / 2 - 5,
         size: 10,
         font: helveticaBold,
-        color: colors.darkGreen,
+        color: colors.darkGrey,
       }
     );
   }
 
+  /**
+   * FOOTER
+   */
   page.drawRectangle({
     x: 0,
     y: 0,
-    width,
-    height: footerHeight,
+    width: PAGE_WIDTH,
+    height: FOOTER_HEIGHT,
     color: colors.offWhite,
   });
 
-  page.drawText(`Generated on ${formatDate(new Date())}`, {
-    x: 40,
-    y: 20,
-    size: 10,
-    font: helvetica,
-    color: colors.darkGreen,
-  });
+  const footerText = `Generated on ${formatDate(new Date())}`;
+  const footerTextWidth = helvetica.widthOfTextAtSize(footerText, 10);
 
-  page.drawText('© S-Bank Reports', {
-    x: width - 120,
-    y: 20,
+  page.drawText(footerText, {
+    x: PAGE_WIDTH / 2 - footerTextWidth / 2,
+    y: FOOTER_HEIGHT / 2 - 3,
     size: 10,
     font: helvetica,
     color: colors.darkGreen,
