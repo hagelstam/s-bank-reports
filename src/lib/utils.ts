@@ -37,3 +37,12 @@ export const tryCatch = async <T, E = Error>(
     return { data: null, error: error as E };
   }
 };
+
+export const downloadFile = (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+};

@@ -1,9 +1,8 @@
 'use client';
 
+import { MAX_CSV_SIZE } from '@/lib/constants';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 interface DropzoneProps {
   onChange: (file: File | null) => void;
@@ -24,7 +23,7 @@ export const Dropzone = ({ onChange, fileName }: DropzoneProps) => {
     accept: { 'text/csv': ['.csv'] },
     multiple: false,
     maxFiles: 1,
-    maxSize: MAX_FILE_SIZE,
+    maxSize: MAX_CSV_SIZE,
   });
 
   return (

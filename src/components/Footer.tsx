@@ -2,7 +2,7 @@ import GitHub from '@/assets/github.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function Footer() {
+export const Footer = () => {
   return (
     <footer className="bg-background mt-auto w-full border-t border-gray-200">
       <div className="mx-6 flex h-20 max-w-[1024px] flex-row items-center justify-between lg:mx-auto">
@@ -28,4 +28,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+};

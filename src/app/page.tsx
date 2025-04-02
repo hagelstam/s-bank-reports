@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Dropzone } from '@/components';
+import { downloadFile } from '@/lib/utils';
 import { useState } from 'react';
 
 export default function Home() {
@@ -27,14 +28,9 @@ export default function Home() {
 
       const date = new Date().toLocaleDateString('fi-FI');
       const filename = `S-Bank Report ${date}.pdf`;
-
       const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
-      window.URL.revokeObjectURL(url);
+
+      downloadFile(blob, filename);
 
       setIsLoading(false);
       setFile(null);
@@ -51,7 +47,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6">
+    <div className="mt-16 flex flex-col items-center justify-center gap-6">
       <h1 className="text-text-accent font-serif text-7xl">S-Bank Reports</h1>
       <p className="mb-10 max-w-2xl text-center text-xl">
         Upload your S-Bank transactions CSV, and let us turn it into a simple

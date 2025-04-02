@@ -10,8 +10,6 @@
     "typecheck": "tsc --noEmit",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "e2e:headless": "cypress run --e2e --headless",
-    "e2e:ci": "start-server-and-test 'npm run dev' http://localhost:3000 'npm run e2e:headless'",
     "clean": "rm -rf .next node_modules"
   },
   "dependencies": {
@@ -31,14 +29,12 @@
     "@types/papaparse": "^5.3.15",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
-    "cypress": "^14.2.1",
     "eslint": "^9.23.0",
     "eslint-config-next": "15.2.4",
     "eslint-config-prettier": "^10.1.1",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "start-server-and-test": "^2.0.11",
     "tailwindcss": "^4.0.17",
     "typescript": "^5.8.2"
   }

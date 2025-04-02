@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en" className={clsx(sBonusUX.variable, sBonusDisplay.variable)}>
       <body className="bg-background text-text-primary flex min-h-screen flex-col antialiased">
         <Navbar />
-        <main className="container mx-auto mt-32 mb-16 flex-grow px-4">
+        <main className="container mx-auto my-16 max-w-[1024px] flex-grow px-4">
           {children}
         </main>
         <Footer />
