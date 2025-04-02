@@ -1,12 +1,14 @@
 import { Footer, Navbar } from '@/components';
+import { IS_PROD } from '@/lib/constants';
 import { sBonusDisplay, sBonusUX } from '@/lib/fonts';
 import '@/styles/globals.css';
+import { Analytics } from '@vercel/analytics/next';
 import clsx from 'clsx';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'S-Bank Reports',
-  description: 'Generate reports for S-Bank accounts',
+  description: 'Generate financial reports for S-Bank accounts',
 };
 
 export default function RootLayout({
@@ -22,6 +24,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <Analytics mode={IS_PROD ? 'production' : 'development'} />;
       </body>
     </html>
   );
